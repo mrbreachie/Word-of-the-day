@@ -2,19 +2,19 @@
 
 A small web development project that displays a Word of the Day.
 
-This is a **learning project** for two people who are learning to code together. The goal is to learn by building something useful rather than following a tutorial without understanding what the code does.
+This is a **learning project** for two people who are learning to code together. The goal is to learn by building something useful rather than simply following a tutorial.
 
 The project will start very simple and gradually become more advanced.
 
 ---
 
-## 🎯 Project Goal
+# 🎯 Project Goal
 
 Build a website that:
 
 1. Displays a word.
 2. Displays information about that word.
-3. Gets words from a local list.
+3. Gets words from a local JSON list.
 4. Randomly selects a word.
 5. Eventually displays a different Word of the Day every 24 hours.
 6. Is hosted publicly using GitHub Pages.
@@ -29,21 +29,19 @@ The first version should be intentionally simple.
 
 For Version 1 we will use:
 
-- **HTML** - Website structure
-- **CSS** - Website appearance
-- **JavaScript** - Website functionality
-- **JSON** - Store our list of words
-- **Git** - Version control
-- **GitHub** - Store the project and collaborate
-- **GitHub Pages** - Host the website
+* **HTML** - Website structure
+* **CSS** - Website appearance
+* **JavaScript** - Website functionality
+* **JSON** - Store our list of words
+* **Git** - Version control
+* **GitHub** - Store the project and collaborate
+* **GitHub Pages** - Host the website
 
 We should avoid frameworks such as React initially. The purpose of this project is to understand the fundamentals first.
 
 ---
 
 # 📁 Planned File Structure
-
-Eventually the project should look something like:
 
 ```text
 word-of-the-day/
@@ -62,11 +60,13 @@ Contains the structure of the webpage.
 
 For example:
 
-- Page title
-- Word
-- Definition
-- Example sentence
-- Buttons
+* Page title
+* Word
+* Definition
+* Part of speech
+* Pronunciation
+* Example sentence
+* Buttons
 
 ---
 
@@ -76,13 +76,13 @@ Controls how the website looks.
 
 Things such as:
 
-- Fonts
-- Sizes
-- Spacing
-- Background
-- Colours
-- Buttons
-- Responsive design
+* Fonts
+* Sizes
+* Spacing
+* Background
+* Colours
+* Buttons
+* Responsive design
 
 ---
 
@@ -92,12 +92,14 @@ Controls the functionality.
 
 Eventually it will:
 
-- Load the word list
-- Choose a word
-- Display the word
-- Display its definition
-- Handle buttons
-- Determine the daily word
+* Load the word list
+* Choose a word
+* Display the word
+* Display its definition
+* Display pronunciation
+* Display the example
+* Handle buttons
+* Determine the daily word
 
 ---
 
@@ -105,19 +107,71 @@ Eventually it will:
 
 Contains the words used by the website.
 
-Example structure:
+## JSON Schema
+
+The initial schema for each word is:
+
+| Field           | Type   | Required | Description                     |
+| --------------- | ------ | -------- | ------------------------------- |
+| `id`            | Number | Yes      | Unique identifier for the word  |
+| `word`          | String | Yes      | The word itself                 |
+| `definition`    | String | Yes      | Definition of the word          |
+| `partOfSpeech`  | String | Yes      | Noun, verb, adjective, etc.     |
+| `pronunciation` | String | No       | Easy-to-read pronunciation      |
+| `example`       | String | No       | Example sentence using the word |
+
+### Example
 
 ```json
-[
+{
+  "words": [
     {
-        "word": "Serendipity",
-        "definition": "A fortunate discovery made by chance.",
-        "example": "Finding that little café was pure serendipity."
+      "id": 1,
+      "word": "Serendipity",
+      "definition": "The occurrence of events by chance in a happy or beneficial way.",
+      "partOfSpeech": "noun",
+      "pronunciation": "ser-en-DIP-i-tee",
+      "example": "Finding that little café was pure serendipity."
+    },
+    {
+      "id": 2,
+      "word": "Mellifluous",
+      "definition": "Pleasantly smooth and musical to hear.",
+      "partOfSpeech": "adjective",
+      "pronunciation": "meh-LIF-loo-us",
+      "example": "She had a mellifluous voice."
     }
-]
+  ]
+}
 ```
 
-We can expand the information stored for each word later.
+### Schema rules
+
+For Version 1:
+
+* Every word must have a unique `id`.
+* `word` must contain the word being displayed.
+* `definition` must contain a definition.
+* `partOfSpeech` should identify how the word is used.
+* `pronunciation` can be omitted if one isn't available.
+* `example` can be omitted if one isn't available.
+* Keep the data consistent between entries.
+* Avoid duplicate words.
+
+### Future schema improvements
+
+The schema may eventually be expanded to support:
+
+* Multiple definitions
+* Multiple parts of speech
+* Difficulty levels
+* Categories
+* Word origins/etymology
+* Audio pronunciation
+* Synonyms
+* Antonyms
+
+These should **not** be added until they are actually needed.
 
 ---
 
@@ -136,20 +190,25 @@ Serendipity
 
 A fortunate discovery made by chance.
 
+Noun
+
+Pronunciation:
+ser-en-DIP-i-tee
+
 Example:
 Finding that little café was pure serendipity.
 ```
 
 ### Learn
 
-- HTML documents
-- Elements
-- Headings
-- Paragraphs
-- Divs
-- Classes
-- IDs
-- Basic page structure
+* HTML documents
+* Elements
+* Headings
+* Paragraphs
+* Divs
+* Classes
+* IDs
+* Basic page structure
 
 ### Done when
 
@@ -165,24 +224,25 @@ Make the page look like an actual website.
 
 Things to experiment with:
 
-- Background
-- Fonts
-- Text size
-- Alignment
-- Spacing
-- Cards
-- Buttons
+* Background
+* Fonts
+* Text size
+* Alignment
+* Spacing
+* Cards
+* Buttons
+* Mobile layout
 
 ### Learn
 
-- Selectors
-- Classes
-- IDs
-- Box model
-- Margin
-- Padding
-- Flexbox
-- Responsive design
+* Selectors
+* Classes
+* IDs
+* Box model
+* Margin
+* Padding
+* Flexbox
+* Responsive design
 
 ### Done when
 
@@ -200,17 +260,17 @@ Instead of manually writing the word into HTML, JavaScript should control what a
 
 ### Learn
 
-- Variables
-- Strings
-- Objects
-- Functions
-- DOM manipulation
-- `querySelector`
-- Changing HTML/text with JavaScript
+* Variables
+* Strings
+* Objects
+* Functions
+* DOM manipulation
+* `querySelector`
+* Changing text with JavaScript
 
 ### Done when
 
-Changing the word in JavaScript changes what appears on the webpage.
+Changing the word data changes what appears on the webpage.
 
 ---
 
@@ -218,38 +278,32 @@ Changing the word in JavaScript changes what appears on the webpage.
 
 ### Goal
 
-Create a collection of words.
+Create a collection of words using `words.json`.
 
-Initially aim for around:
+Initially aim for:
 
 **30-50 words**
 
 Each word should contain:
 
-- Word
-- Definition
-- Example sentence
-
-Example:
-
-```json
-{
-    "word": "Mellifluous",
-    "definition": "Pleasantly smooth and musical to hear.",
-    "example": "She had a mellifluous voice."
-}
-```
+* ID
+* Word
+* Definition
+* Part of speech
+* Pronunciation where available
+* Example sentence where available
 
 ### Learn
 
-- Arrays
-- Objects
-- JSON
-- Structured data
+* Arrays
+* Objects
+* JSON
+* Structured data
+* Reading external JSON data
 
 ### Done when
 
-The website can access multiple words.
+The website can access multiple words from `words.json`.
 
 ---
 
@@ -264,24 +318,29 @@ Conceptually:
 ```text
 Load website
       ↓
-Load word list
+Load words.json
       ↓
-Count available words
+Get list of words
       ↓
 Generate random number
       ↓
 Select word
       ↓
 Display word
+      ↓
+Display definition
+      ↓
+Display other information
 ```
 
 ### Learn
 
-- Array indexes
-- `Math.random()`
-- `Math.floor()`
-- Functions
-- Working with arrays
+* Array indexes
+* `Math.random()`
+* `Math.floor()`
+* Functions
+* Working with arrays
+* JSON data
 
 ### Done when
 
@@ -303,11 +362,11 @@ Clicking it should select another random word.
 
 ### Learn
 
-- Events
-- Event listeners
-- Functions
-- Buttons
-- Reusing functions
+* Events
+* Event listeners
+* Functions
+* Buttons
+* Reusing functions
 
 ### Done when
 
@@ -396,15 +455,22 @@ instead of:
 finished website
 ```
 
-### 3. Explain your code
+### 3. Review each other's work
 
-Because this is a learning project, don't just copy code without understanding it.
+Before merging a Pull Request:
 
-If one of us writes something we don't understand, ask:
+* Read the code
+* Test the feature
+* Ask questions about anything unclear
+* Check that existing features still work
 
-> "What does this line actually do?"
+The goal is for both people to understand the project.
 
-Understanding the code is more important than getting the feature working quickly.
+### 4. Don't copy code you don't understand
+
+Because this is a learning project, understanding the code is more important than getting the feature working quickly.
+
+If something doesn't make sense, stop and figure out what it does.
 
 ---
 
@@ -412,7 +478,7 @@ Understanding the code is more important than getting the feature working quickl
 
 Once the website works locally, publish it using GitHub Pages.
 
-GitHub Pages can host HTML, CSS and JavaScript directly from a GitHub repository, so we don't need to pay for a separate web server.
+GitHub Pages can host HTML, CSS and JavaScript directly from a GitHub repository, so we don't need a separate web server.
 
 The basic setup will be:
 
@@ -432,26 +498,26 @@ We can send someone a URL and they can open the Word of the Day website.
 
 # Phase 9 - Word of the Day
 
-### Important
+### Current behaviour
 
-The first random version does **not** need anything running on a server.
-
-JavaScript runs in the visitor's browser.
-
-We can eventually change the logic from:
+The first version will randomly select a word whenever the website loads.
 
 ```text
-Pick a random word whenever the page loads
+Page loads
+    ↓
+Random word
 ```
 
-to:
+### Future behaviour
+
+Eventually we want:
 
 ```text
-Determine today's date
-        ↓
-Use today's date to select a word
-        ↓
-Everyone gets the same word
+Date
+ ↓
+Determine today's word
+ ↓
+Display today's word
 ```
 
 For example:
@@ -463,9 +529,11 @@ September 3 → Word C
 September 4 → Word D
 ```
 
-This means the word can change every 24 hours while still being hosted entirely as a static GitHub Pages website.
+Everyone visiting the website on the same day should receive the same word.
 
-We do **not** need a server running constantly to accomplish this.
+This can be done entirely with JavaScript running in the visitor's browser.
+
+**We do not need a server running every 24 hours.**
 
 ---
 
@@ -473,27 +541,25 @@ We do **not** need a server running constantly to accomplish this.
 
 These are intentionally NOT part of Version 1.
 
-Once the basic project works, we can consider:
-
-- [ ] Same Word of the Day for everyone
-- [ ] Countdown until next word
-- [ ] Previous Words
-- [ ] Search words
-- [ ] Favourite words
-- [ ] Categories
-- [ ] Difficulty levels
-- [ ] Pronunciation
-- [ ] Audio pronunciation
-- [ ] Dark mode
-- [ ] Animations
-- [ ] Mobile optimisation
-- [ ] Dictionary API
-- [ ] Thousands of words
-- [ ] Word history
-- [ ] Daily streak
-- [ ] Share today's word
-- [ ] Social media sharing
-- [ ] Custom domain
+* [ ] Same Word of the Day for everyone
+* [ ] Countdown until next word
+* [ ] Previous Words
+* [ ] Search words
+* [ ] Favourite words
+* [ ] Categories
+* [ ] Difficulty levels
+* [ ] Pronunciation
+* [ ] Audio pronunciation
+* [ ] Dark mode
+* [ ] Animations
+* [ ] Mobile optimisation
+* [ ] Dictionary API
+* [ ] Thousands of words
+* [ ] Word history
+* [ ] Daily streak
+* [ ] Share today's word
+* [ ] Social media sharing
+* [ ] Custom domain
 
 ---
 
@@ -529,29 +595,38 @@ Build one feature at a time.
 
 Don't try to build the entire website in one go.
 
+### Rule 7
+
+Teach each other
+
+If one person figures something out, explain it to the other person rather than simply committing the finished solution.
+
 ---
 
 # ✅ Version 1 Definition of Done
 
 Version 1 is complete when:
 
-- [ ] Repository created
-- [ ] `index.html` created
-- [ ] Basic webpage created
-- [ ] CSS added
-- [ ] JavaScript added
-- [ ] `words.json` created
-- [ ] At least 30 words added
-- [ ] JavaScript loads the word list
-- [ ] Random word selected
-- [ ] Word displayed
-- [ ] Definition displayed
-- [ ] Example displayed
-- [ ] "Another Word" button works
-- [ ] Project committed to Git
-- [ ] Project pushed to GitHub
-- [ ] GitHub Pages enabled
-- [ ] Live website works
+* [ ] Repository created
+* [ ] `index.html` created
+* [ ] Basic webpage created
+* [ ] CSS added
+* [ ] JavaScript added
+* [ ] `words.json` created
+* [ ] JSON follows the agreed schema
+* [ ] At least 30 words added
+* [ ] JavaScript loads `words.json`
+* [ ] Random word selected
+* [ ] Word displayed
+* [ ] Definition displayed
+* [ ] Part of speech displayed
+* [ ] Pronunciation displayed when available
+* [ ] Example displayed when available
+* [ ] "Another Word" button works
+* [ ] Project committed to Git
+* [ ] Project pushed to GitHub
+* [ ] GitHub Pages enabled
+* [ ] Live website works
 
 ---
 
