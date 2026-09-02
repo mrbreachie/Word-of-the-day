@@ -1,0 +1,20 @@
+{
+    "words": [
+        {
+            "id": 1,
+            "word": "Serendipity",
+            "definition": "The occurrence of events by chance in a happy or beneficial way.",
+            "partOfSpeech": "noun",
+            "pronunciation": "ser-en-DIP-i-tee",
+            "example": "Finding that little café was pure serendipity."
+        },
+        {
+            "id": 2,
+            "word": "Mellifluous",
+            "definition": "Pleasantly smooth and musical to hear.",
+            "partOfSpeech": "adjective",
+            "pronunciation": "meh-LIF-loo-us",
+            "example": "She had a mellifluous voice."
+        }
+    ]
+}
