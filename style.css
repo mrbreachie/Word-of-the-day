@@ -1,0 +1,105 @@
+/* =========================
+   Page
+   ========================= */
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  background-color: #171717;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #171717 0px,
+    #171717 2px,
+    #1b1b1b 2px,
+    #1b1b1b 4px
+  );
+
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+/* =========================
+   Main heading
+   ========================= */
+
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  margin-top: 60px;
+  margin-bottom: 40px;
+}
+
+/* =========================
+   Word Card
+   ========================= */
+
+#word-card {
+  width: 80%;
+  max-width: 500px;
+
+  margin: 0 auto;
+  padding: 40px;
+
+  text-align: center;
+
+  background: darkslategray;
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 25px rgba(72, 209, 204, 0.2);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* =========================
+   Card hover effect
+   ========================= */
+
+#word-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.6),
+    0 0 35px rgba(72, 209, 204, 0.35);
+}
+
+/* =========================
+   Word
+   ========================= */
+
+.word {
+  font-size: 2.5rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+
+  text-transform: capitalize;
+}
+
+/* =========================
+   Definition
+   ========================= */
+
+.definition {
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+/* =========================
+   Example
+   ========================= */
+
+.example {
+  margin-top: 25px;
+
+  font-style: italic;
+  line-height: 1.6;
+
+  opacity: 0.8;
+}
