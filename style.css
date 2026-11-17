@@ -1,33 +1,149 @@
 /* =========================
+   Colours & settings
+   ========================= */
+
+:root {
+  --bg: #171717;
+  --bg-stripe: #1b1b1b;
+  --card: #1f3535;
+  --card-edge: rgba(255, 255, 255, 0.1);
+  --accent: #48d1cc;
+  --accent-soft: rgba(72, 209, 204, 0.15);
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =========================
    Page
    ========================= */
 
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
 
-  background-color: #171717;
+  background-color: var(--bg);
   background-image: repeating-linear-gradient(
     45deg,
-    #171717 0px,
-    #171717 2px,
-    #1b1b1b 2px,
-    #1b1b1b 4px
+    var(--bg) 0px,
+    var(--bg) 2px,
+    var(--bg-stripe) 2px,
+    var(--bg-stripe) 4px
   );
 
-  font-family: Arial, sans-serif;
-  color: white;
+  font-family: var(--font-body);
+  color: var(--text);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 48px 16px 32px;
 }
 
 /* =========================
-   Main heading
+   Intro animation
    ========================= */
 
-h1 {
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  background: var(--bg);
+  /* clip-path lets the whole screen slide up like a curtain */
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.9s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+#intro.done {
+  clip-path: inset(0 0 100% 0);
+}
+
+.intro-date {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  animation: fade-up 0.6s 0.1s ease forwards;
+}
+
+.intro-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 9vw, 4.5rem);
+  font-weight: 600;
   text-align: center;
-  font-size: 3rem;
-  margin-top: 60px;
-  margin-bottom: 40px;
+  padding: 0 16px;
+}
+
+/* Each letter of the intro title is wrapped in a span by script.js */
+.intro-title span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.6em) rotate(8deg);
+  animation: letter-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(0.25s + var(--i) * 0.04s);
+}
+
+.intro-bar {
+  width: 140px;
+  height: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--accent-soft);
+}
+
+.intro-bar span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: var(--accent);
+  animation: loading 1.1s ease-in-out infinite;
+}
+
+/* =========================
+   Header
+   ========================= */
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 6vw, 3rem);
 }
 
 /* =========================
@@ -35,39 +151,68 @@ h1 {
    ========================= */
 
 #word-card {
-  width: 80%;
-  max-width: 500px;
+  width: 100%;
+  max-width: 560px;
 
-  margin: 0 auto;
-  padding: 40px;
+  padding: clamp(24px, 6vw, 44px);
 
   text-align: center;
 
-  background: darkslategray;
+  background: linear-gradient(160deg, #2f4f4f 0%, var(--card) 100%);
 
-  border-radius: 15px;
+  border-radius: 18px;
 
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.5),
     0 0 25px rgba(72, 209, 204, 0.2);
 
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--card-edge);
 
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    opacity 0.25s ease;
 }
 
-/* =========================
-   Card hover effect
-   ========================= */
+/* Only lift the card on devices that can actually hover */
+@media (hover: hover) {
+  #word-card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 15px 35px rgba(0, 0, 0, 0.6),
+      0 0 35px rgba(72, 209, 204, 0.35);
+  }
+}
 
-#word-card:hover {
-  transform: translateY(-5px);
+#word-card.swapping {
+  opacity: 0;
+}
 
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.6),
-    0 0 35px rgba(72, 209, 204, 0.35);
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.part-of-speech,
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.part-of-speech {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.badge {
+  color: var(--text-muted);
 }
 
 /* =========================
@@ -75,31 +220,343 @@ h1 {
    ========================= */
 
 .word {
-  font-size: 2.5rem;
-  margin-top: 0;
-  margin-bottom: 15px;
+  margin: 0 0 10px;
+
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 11vw, 4rem);
+  line-height: 1.1;
 
   text-transform: capitalize;
+  overflow-wrap: anywhere;
+
+  perspective: 600px;
+}
+
+/* Each letter of the word is a span so it can flip in on its own */
+.word span {
+  display: inline-block;
+  transform-origin: 50% 100%;
+}
+
+.reveal .word span {
+  opacity: 0;
+  transform: rotateX(-90deg) translateY(0.2em);
+  filter: blur(6px);
+  animation: letter-flip 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(0.1s + var(--i) * 0.055s);
 }
 
 /* =========================
-   Definition
+   Pronunciation
+   ========================= */
+
+.pronunciation-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  margin-bottom: 20px;
+}
+
+.pronunciation {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px 0 10px;
+
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  border: 1px solid var(--card-edge);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: pointer;
+
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.audio-btn:hover {
+  background: rgba(72, 209, 204, 0.3);
+}
+
+.audio-btn:active {
+  transform: scale(0.92);
+}
+
+.audio-btn[hidden] {
+  display: none;
+}
+
+/* =========================
+   Definition & example
    ========================= */
 
 .definition {
-  font-size: 1.2rem;
+  margin: 0;
+  font-size: clamp(1.05rem, 3.8vw, 1.25rem);
   line-height: 1.6;
 }
 
-/* =========================
-   Example
-   ========================= */
-
 .example {
-  margin-top: 25px;
+  margin: 22px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid var(--card-edge);
 
+  font-family: var(--font-display);
   font-style: italic;
   line-height: 1.6;
 
   opacity: 0.8;
+}
+
+.example:empty {
+  display: none;
+}
+
+.synonyms {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.synonyms:empty {
+  display: none;
+}
+
+.synonyms li {
+  padding: 4px 12px;
+  border: 1px solid var(--card-edge);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* The parts under the word fade up one after another */
+.reveal .card-top,
+.reveal .pronunciation-row,
+.reveal .definition,
+.reveal .example,
+.reveal .synonyms {
+  opacity: 0;
+  animation: fade-up 0.6s ease forwards;
+}
+
+.reveal .card-top { animation-delay: 0.05s; }
+.reveal .pronunciation-row { animation-delay: var(--after-word); }
+.reveal .definition { animation-delay: calc(var(--after-word) + 0.12s); }
+.reveal .example { animation-delay: calc(var(--after-word) + 0.24s); }
+.reveal .synonyms { animation-delay: calc(var(--after-word) + 0.36s); }
+
+/* =========================
+   Buttons
+   ========================= */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn {
+  min-height: 44px;
+  padding: 10px 22px;
+
+  font: inherit;
+  font-weight: 500;
+  color: var(--text);
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-edge);
+  border-radius: 999px;
+  cursor: pointer;
+
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.btn[hidden] {
+  display: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0f2222;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #6fe0dc;
+}
+
+.btn:focus-visible,
+.audio-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.countdown {
+  margin-top: auto;
+  padding-top: 32px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.countdown {
+  text-align: center;
+}
+
+#word-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+/* =========================
+   Small screens (phones)
+   ========================= */
+
+@media (max-width: 480px) {
+  main {
+    padding: 32px 16px 24px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  .page-header {
+    margin-bottom: 24px;
+  }
+
+  #word-card {
+    border-radius: 14px;
+  }
+
+  .card-top {
+    margin-bottom: 14px;
+  }
+
+  .pronunciation-row {
+    margin-bottom: 14px;
+  }
+
+  .example {
+    margin-top: 18px;
+    padding-top: 18px;
+  }
+
+  /* Big, easy-to-tap buttons side by side */
+  .actions {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .actions .btn {
+    flex: 1 1 0;
+  }
+}
+
+/* Large screens get a little more breathing room */
+@media (min-width: 900px) {
+  main {
+    padding-top: 72px;
+  }
+
+  .page-header {
+    margin-bottom: 40px;
+  }
+}
+
+/* The page content waits behind the intro, then rises in */
+main {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease 0.25s, transform 0.7s ease 0.25s;
+}
+
+body.ready main {
+  opacity: 1;
+  transform: none;
+}
+
+/* =========================
+   Animations
+   ========================= */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes letter-rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes letter-flip {
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes loading {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+/* =========================
+   Respect "reduce motion" settings
+   ========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
 }
