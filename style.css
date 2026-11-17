@@ -227,8 +227,8 @@ h1 {
   font-size: clamp(2.4rem, 11vw, 4rem);
   line-height: 1.1;
 
-  text-transform: capitalize;
-  overflow-wrap: anywhere;
+  /* Keep the word on one line; script.js shrinks it if it's too wide */
+  white-space: nowrap;
 
   perspective: 600px;
 }

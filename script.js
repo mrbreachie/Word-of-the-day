@@ -117,10 +117,26 @@ function splitLetters(el, text) {
   el.setAttribute("aria-label", text);
 }
 
+// Shrink the word's font size until it fits on one line.
+// It starts at the size set in style.css and only ever gets smaller.
+function fitWord() {
+  const el = els.word;
+  el.style.fontSize = ""; // go back to the CSS size first
+  const available = el.clientWidth;
+  const needed = el.scrollWidth;
+  if (needed > available) {
+    const size = parseFloat(getComputedStyle(el).fontSize);
+    el.style.fontSize = Math.floor(size * (available / needed) * 0.98) + "px";
+  }
+}
+
 function renderWord(w) {
   currentWord = w;
 
-  splitLetters(els.word, w.word.toLowerCase());
+  // Capitalise here rather than with CSS: because each letter is its own
+  // <span>, CSS "capitalize" would make every letter a capital in Firefox
+  splitLetters(els.word, capitalise(w.word.toLowerCase()));
+  fitWord();
   els.partOfSpeech.textContent = w.partOfSpeech || "";
   els.partOfSpeech.hidden = !w.partOfSpeech;
   els.pronunciation.textContent = w.pronunciation || "";
@@ -208,6 +224,11 @@ els.audioBtn.hidden = !canSpeak;
    --------------------------------------------------------- */
 
 els.anotherBtn.addEventListener("click", showAnotherWord);
+
+// Re-fit the word when the screen size changes (e.g. rotating a phone)
+// and once the Fraunces font has finished loading, since it changes the width
+window.addEventListener("resize", () => currentWord && fitWord());
+if (document.fonts) document.fonts.ready.then(() => currentWord && fitWord());
 
 els.audioBtn.addEventListener("click", () => {
   if (canSpeak && currentWord) speak(currentWord.word);
