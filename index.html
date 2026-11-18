@@ -13,7 +13,7 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css?v=2" />
   </head>
   <body>
     <!-- Intro screen: shown while the word loads, then slides away -->
@@ -62,7 +62,8 @@
       <p class="countdown">A new word every day · <span id="word-count">0</span> words to discover</p>
     </main>
 
-    <script src="daily-word.js"></script>
-    <script src="script.js"></script>
+    <!-- Bump ?v= whenever these files change, so browsers fetch the new versions -->
+    <script src="daily-word.js?v=2"></script>
+    <script src="script.js?v=2"></script>
   </body>
 </html>

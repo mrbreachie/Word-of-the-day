@@ -17,32 +17,46 @@ const path = require("path");
 const { wordForDate, TIME_ZONE } = require("../daily-word.js");
 
 const WORDS_PATH = path.join(__dirname, "..", "words.json");
-const COLOUR = 0x6c5ce7; // embed stripe colour
+const COLOUR = 0x48d1cc; // embed stripe colour, matches --accent on the site
 
-function buildMessage(w, date) {
-  const fields = [];
-  if (w.example) fields.push({ name: "Example", value: `*${w.example}*` });
-  if (w.synonyms && w.synonyms.length) {
-    fields.push({ name: "Synonyms", value: w.synonyms.join(", ") });
-  }
-
-  const heading = [w.partOfSpeech, w.pronunciation].filter(Boolean).join(" · ");
+function buildMessage(w, date, total) {
+  const siteUrl = process.env.SITE_URL;
   const dateText = date.toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long",
-    year: "numeric",
     timeZone: TIME_ZONE,
   });
 
+  // e.g.  *noun*  ·  `ser-en-DIP-i-tee`
+  const heading = [
+    w.partOfSpeech && `*${w.partOfSpeech}*`,
+    w.pronunciation && `\`${w.pronunciation}\``,
+  ]
+    .filter(Boolean)
+    .join("  ·  ");
+
+  const lines = [];
+  if (heading) lines.push(heading, "");
+  lines.push(`**${w.definition}**`);
+  if (w.example) lines.push("", `> *${w.example}*`);
+  if (w.synonyms && w.synonyms.length) {
+    lines.push("", "**Similar words**", w.synonyms.map((s) => `\`${s}\``).join("  "));
+  }
+  if (siteUrl) lines.push("", `[Listen & explore more words →](${siteUrl})`);
+
   const embed = {
+    author: { name: `📖  Word of the Day  ·  ${dateText}` },
     title: w.word,
-    description: (heading ? `*${heading}*\n\n` : "") + w.definition,
+    description: lines.join("\n"),
     color: COLOUR,
-    fields,
-    footer: { text: `Word of the Day · ${dateText}` },
+    footer: { text: `Word No. ${w.id} of ${total}  ·  A new word every day` },
+    timestamp: date.toISOString(),
   };
-  if (process.env.SITE_URL) embed.url = process.env.SITE_URL;
+  if (siteUrl) {
+    embed.url = siteUrl;
+    embed.author.url = siteUrl;
+  }
 
   return { username: "Word of the Day", embeds: [embed] };
 }
@@ -52,7 +66,7 @@ async function main() {
   if (!Array.isArray(words) || words.length === 0) throw new Error("No words in words.json");
 
   const now = new Date();
-  const message = buildMessage(wordForDate(words, now), now);
+  const message = buildMessage(wordForDate(words, now), now, words.length);
 
   if (process.env.DRY_RUN) {
     console.log(JSON.stringify(message, null, 2));
