@@ -18,8 +18,14 @@ Discord webhook and GitHub Actions. There's nothing to host and it costs nothing
 4. **Test it.**
    Open **Actions → Discord Word of the Day → Run workflow**.
 
-After that it posts every day at 08:00 UTC. To change the time, edit the `cron`
-line in `.github/workflows/discord-word.yml`.
+After that it posts every day at midday Melbourne time. Because Melbourne has
+daylight saving, the workflow runs at both 01:00 and 02:00 UTC, and the script
+only posts from the run that lands at 12:00 in Melbourne (the other run just
+logs "skipping"). To change the time, edit `POST_TIME_ZONE` / `POST_HOUR` in
+`post-word.js` and the `cron` lines in `.github/workflows/discord-word.yml`.
+
+If GitHub starts a scheduled run more than an hour late (rare), that day's post
+is skipped. Use **Run workflow** to post it by hand.
 
 ## Preview without posting
 

@@ -2,9 +2,14 @@ name: Discord Word of the Day
 
 on:
   schedule:
-    # Every day at 08:00 UTC (8am UK in winter, 9am in summer).
-    # GitHub can run scheduled jobs a few minutes late.
-    - cron: "0 8 * * *"
+    # Midday in Melbourne. GitHub only uses UTC, and Melbourne's offset
+    # changes with daylight saving, so we run at both possible times:
+    #   01:00 UTC = 12:00 in summer (AEDT, UTC+11)
+    #   02:00 UTC = 12:00 in winter (AEST, UTC+10)
+    # The script checks Melbourne's clock and only posts during the
+    # 12 o'clock hour, so just one of these posts each day.
+    - cron: "0 1 * * *"
+    - cron: "0 2 * * *"
   # Adds a "Run workflow" button on the Actions tab for testing
   workflow_dispatch:
 

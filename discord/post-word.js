@@ -17,6 +17,8 @@ const path = require("path");
 const { wordForDate, TIME_ZONE } = require("../daily-word.js");
 
 const WORDS_PATH = path.join(__dirname, "..", "words.json");
+const POST_TIME_ZONE = "Australia/Melbourne";
+const POST_HOUR = 12; // scheduled runs only post during this hour (midday)
 const COLOUR = 0x48d1cc; // embed stripe colour, matches --accent on the site
 
 function buildMessage(w, date, total) {
@@ -66,6 +68,20 @@ async function main() {
   if (!Array.isArray(words) || words.length === 0) throw new Error("No words in words.json");
 
   const now = new Date();
+
+  // The workflow runs at two UTC times to cope with daylight saving.
+  // Only the one that lands at midday in Melbourne should post.
+  // Manual runs ("Run workflow") always post.
+  if (process.env.GITHUB_EVENT_NAME === "schedule") {
+    const hour = Number(
+      new Intl.DateTimeFormat("en-GB", { timeZone: POST_TIME_ZONE, hour: "numeric", hourCycle: "h23" }).format(now)
+    );
+    if (hour !== POST_HOUR) {
+      console.log(`It's ${hour}:00 in Melbourne, not ${POST_HOUR}:00 — skipping this run.`);
+      return;
+    }
+  }
+
   const message = buildMessage(wordForDate(words, now), now, words.length);
 
   if (process.env.DRY_RUN) {
