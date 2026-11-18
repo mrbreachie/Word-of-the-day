@@ -3,10 +3,11 @@
 
    How it works:
    1. Load our list of English words from words.json.
-   2. Pick one at random every time the page loads.
-   3. Remember the last few words shown (in localStorage) so
-      you don't see the same word twice in a row.
-   4. "Another word" picks a new one without refreshing.
+   2. Show today's word, chosen by daily-word.js. It's the same
+      word for everyone, changes at midnight UK time, and matches
+      the Discord post.
+   3. "Another word" lets you browse random words. It remembers the
+      last few shown (in localStorage) so they don't repeat.
    ========================================================= */
 
 const WORDS_URL = "words.json";
@@ -50,6 +51,7 @@ const els = {
 
 let words = []; // filled once words.json has loaded
 let currentWord = null; // the word on screen right now
+let today = null; // the day number today's word was picked for
 
 /* ---------------------------------------------------------
    Loading & picking words
@@ -85,6 +87,10 @@ function addRecent(word) {
   try {
     localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(-limit)));
   } catch {}
+}
+
+function todaysWord() {
+  return DailyWord.wordForDate(words, new Date());
 }
 
 function pickRandomWord() {
@@ -186,6 +192,7 @@ function setDates() {
     weekday: "long",
     day: "numeric",
     month: "long",
+    timeZone: DailyWord.TIME_ZONE,
   });
   els.introDate.textContent = label;
   els.todayDate.textContent = label;
@@ -266,12 +273,29 @@ async function start() {
   words = list;
   els.wordCount.textContent = words.length;
 
-  renderWord(pickRandomWord());
+  today = DailyWord.dayNumber(new Date());
+  renderWord(todaysWord());
   els.intro.classList.add("done");
   document.body.classList.add("ready");
 
   // Remove the intro once it has slid away
   setTimeout(() => els.intro.remove(), 1200);
+
+  // If the page is left open past midnight, move on to the new day's word
+  setInterval(checkForNewDay, 60 * 1000);
+  document.addEventListener("visibilitychange", () => !document.hidden && checkForNewDay());
+}
+
+async function checkForNewDay() {
+  const now = DailyWord.dayNumber(new Date());
+  if (now === today) return;
+  today = now;
+  setDates();
+
+  els.card.classList.add("swapping");
+  await wait(250);
+  renderWord(todaysWord());
+  els.card.classList.remove("swapping");
 }
 
 start();

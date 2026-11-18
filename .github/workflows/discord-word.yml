@@ -1,0 +1,23 @@
+name: Discord Word of the Day
+
+on:
+  schedule:
+    # Every day at 08:00 UTC (8am UK in winter, 9am in summer).
+    # GitHub can run scheduled jobs a few minutes late.
+    - cron: "0 8 * * *"
+  # Adds a "Run workflow" button on the Actions tab for testing
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Post word to Discord
+        run: node discord/post-word.js
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
