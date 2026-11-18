@@ -17,7 +17,7 @@ const path = require("path");
 const { wordForDate, TIME_ZONE } = require("../daily-word.js");
 
 const WORDS_PATH = path.join(__dirname, "..", "words.json");
-const POST_TIME_ZONE = "Australia/Melbourne";
+const POST_TIME_ZONE = TIME_ZONE; // Melbourne, from daily-word.js
 const POST_HOUR = 12; // scheduled runs only post during this hour (midday)
 const COLOUR = 0x48d1cc; // embed stripe colour, matches --accent on the site
 

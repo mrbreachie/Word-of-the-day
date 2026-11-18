@@ -4,8 +4,8 @@
    show the same word on the same day.
 
    How it works:
-   - "Today" is the calendar date in the UK (Europe/London),
-     so the word changes at midnight UK time.
+   - "Today" is the calendar date in Melbourne (Australia/Melbourne),
+     so the word changes at midnight Melbourne time.
    - The word list is shuffled once with a fixed seed, then we
      step through it one word per day. No word repeats until
      the whole list has been used.
@@ -15,7 +15,7 @@
 
 (function (root) {
   const SEED = 20261118; // change this to get a different order
-  const TIME_ZONE = "Europe/London";
+  const TIME_ZONE = "Australia/Melbourne";
 
   // Small seeded random number generator (mulberry32)
   function seededRandom(seed) {
@@ -38,7 +38,7 @@
     return copy;
   }
 
-  // Whole days since 1 Jan 1970, counting by the UK calendar date
+  // Whole days since 1 Jan 1970, counting by the Melbourne calendar date
   function dayNumber(date) {
     const parts = {};
     new Intl.DateTimeFormat("en-GB", {

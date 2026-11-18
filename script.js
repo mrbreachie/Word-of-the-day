@@ -4,7 +4,7 @@
    How it works:
    1. Load our list of English words from words.json.
    2. Show today's word, chosen by daily-word.js. It's the same
-      word for everyone, changes at midnight UK time, and matches
+      word for everyone, changes at midnight Melbourne time, and matches
       the Discord post.
    3. "Another word" lets you browse random words. It remembers the
       last few shown (in localStorage) so they don't repeat.
