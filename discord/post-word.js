@@ -18,7 +18,7 @@ const { wordForDate, TIME_ZONE } = require("../daily-word.js");
 
 const WORDS_PATH = path.join(__dirname, "..", "words.json");
 const POST_TIME_ZONE = TIME_ZONE; // Melbourne, from daily-word.js
-const POST_HOUR = 12; // scheduled runs only post during this hour (midday)
+const POST_HOUR = 12; // scheduled runs only post from this hour onwards (midday)
 const COLOUR = 0x48d1cc; // embed stripe colour, matches --accent on the site
 
 function buildMessage(w, date, total) {
@@ -69,15 +69,16 @@ async function main() {
 
   const now = new Date();
 
-  // The workflow runs at two UTC times to cope with daylight saving.
-  // Only the one that lands at midday in Melbourne should post.
+  // The workflow checks every 15 minutes because GitHub often starts
+  // scheduled runs late. Scheduled runs post once it's midday or later in
+  // Melbourne; the workflow's "posted today" marker stops repeats.
   // Manual runs ("Run workflow") always post.
   if (process.env.GITHUB_EVENT_NAME === "schedule") {
     const hour = Number(
       new Intl.DateTimeFormat("en-GB", { timeZone: POST_TIME_ZONE, hour: "numeric", hourCycle: "h23" }).format(now)
     );
-    if (hour !== POST_HOUR) {
-      console.log(`It's ${hour}:00 in Melbourne, not ${POST_HOUR}:00 — skipping this run.`);
+    if (hour < POST_HOUR) {
+      console.log(`It's ${hour}:00 in Melbourne, before ${POST_HOUR}:00 — skipping this run.`);
       return;
     }
   }
@@ -99,6 +100,11 @@ async function main() {
   });
   if (!res.ok) throw new Error(`Discord said ${res.status}: ${await res.text()}`);
   console.log(`Posted "${message.embeds[0].title}"`);
+
+  // Tell the workflow it can save the "posted today" marker
+  fs.mkdirSync(".posted", { recursive: true });
+  fs.writeFileSync(path.join(".posted", "date.txt"), now.toISOString());
+  if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, "posted=true\n");
 }
 
 main().catch((err) => {

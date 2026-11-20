@@ -2,27 +2,65 @@ name: Discord Word of the Day
 
 on:
   schedule:
-    # Midday in Melbourne. GitHub only uses UTC, and Melbourne's offset
-    # changes with daylight saving, so we run at both possible times:
-    #   01:00 UTC = 12:00 in summer (AEDT, UTC+11)
-    #   02:00 UTC = 12:00 in winter (AEST, UTC+10)
-    # The script checks Melbourne's clock and only posts during the
-    # 12 o'clock hour, so just one of these posts each day.
-    - cron: "0 1 * * *"
-    - cron: "0 2 * * *"
+    # Aim: post once a day, as soon after midday Melbourne time as possible.
+    #
+    # GitHub's scheduler is "best effort" — runs can start hours late or be
+    # skipped, especially on the hour. So instead of one exact run we check
+    # every 15 minutes (on odd minutes, which are less busy) from
+    # 01:00 to 12:59 UTC. That's midday until late evening in Melbourne
+    # whether or not daylight saving is on.
+    #
+    # The script only posts once it's past 12:00 in Melbourne, and the
+    # "posted today" marker below stops it posting twice.
+    - cron: "7,22,37,52 1-12 * * *"
   # Adds a "Run workflow" button on the Actions tab for testing
   workflow_dispatch:
+
+# Never let two runs overlap (so they can't both post)
+concurrency:
+  group: discord-word
+  cancel-in-progress: false
 
 jobs:
   post:
     runs-on: ubuntu-latest
     steps:
+      - name: Work out today's date in Melbourne
+        id: day
+        run: echo "date=$(TZ=Australia/Melbourne date +%F)" >> "$GITHUB_OUTPUT"
+
+      # A cache entry named after today's date acts as a "posted today" marker
+      - name: Check if today's word was already posted
+        id: marker
+        uses: actions/cache/restore@v4
+        with:
+          path: .posted
+          key: discord-posted-${{ steps.day.outputs.date }}
+          lookup-only: true
+
+      - name: Already posted today
+        if: steps.marker.outputs.cache-hit == 'true'
+        run: echo "Already posted for ${{ steps.day.outputs.date }} — nothing to do."
+
       - uses: actions/checkout@v4
+        if: steps.marker.outputs.cache-hit != 'true'
+
       - uses: actions/setup-node@v4
+        if: steps.marker.outputs.cache-hit != 'true'
         with:
           node-version: 20
+
       - name: Post word to Discord
+        id: post
+        if: steps.marker.outputs.cache-hit != 'true'
         run: node discord/post-word.js
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           SITE_URL: ${{ vars.SITE_URL }}
+
+      - name: Remember that today's word was posted
+        if: steps.post.outputs.posted == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .posted
+          key: discord-posted-${{ steps.day.outputs.date }}
